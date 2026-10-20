@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CA Knowledge Test Practice</title>
+<style>
+:root {
+  --bg: #f6f6f3; --card: #ffffff; --text: #1c1c1c; --muted: #666; --line: #d9d9d4;
+  --accent: #1a5fb4; --accent-text: #fff; --accent-soft: #e4edf9;
+  --good: #1e7e34; --good-bg: #e7f5ea; --bad: #c0392b; --bad-bg: #fdecea;
+  --warn: #9a5b00; --warn-bg: #fff3dc;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141414; --card: #1f1f1f; --text: #ececec; --muted: #a3a3a3; --line: #3a3a3a;
+    --accent: #6ea8f5; --accent-text: #0b1a2e; --accent-soft: #1d2b40;
+    --good: #5fcf7a; --good-bg: #16301d; --bad: #ff8178; --bad-bg: #3a1c1a;
+    --warn: #ffbf5e; --warn-bg: #3a2a10;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--text); }
+body { font: 18px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+.wrap { max-width: 860px; margin: 0 auto; padding: 0 16px 24px; }
+h1 { font-size: 26px; margin: 24px 0 12px; }
+h2 { font-size: 22px; margin: 32px 0 12px; }
+h3 { font-size: 19px; margin: 24px 0 8px; }
+p { margin: 8px 0; }
+.muted { color: var(--muted); }
+nav { display: flex; gap: 8px; border-bottom: 2px solid var(--line); margin-bottom: 20px; }
+nav button { background: none; border: none; border-bottom: 3px solid transparent; margin-bottom: -2px;
+  padding: 10px 14px; font: inherit; font-weight: 600; color: var(--muted); cursor: pointer; }
+nav button[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+nav button:disabled { opacity: .45; cursor: default; }
+button.btn { font: inherit; font-weight: 600; padding: 10px 18px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--accent); background: var(--accent); color: var(--accent-text); }
+button.btn.secondary { background: var(--card); color: var(--accent); }
+button.btn.danger { background: var(--card); color: var(--bad); border-color: var(--bad); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px; margin: 14px 0; }
+.row { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: center; }
+label.inline { display: inline-flex; align-items: center; gap: 8px; }
+select { font: inherit; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--text); }
+input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; accent-color: var(--accent); margin: 0; flex: none; }
+
+/* Test */
+.q { border-left: 5px solid var(--line); }
+.q .num { font-weight: 700; margin-right: 6px; }
+.q .topic { display: inline-block; font-size: 14px; color: var(--muted); background: var(--accent-soft); border-radius: 6px; padding: 1px 8px; margin-left: 8px; vertical-align: middle; }
+.q .text { margin: 0 0 12px; }
+.choice { display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line); margin: 8px 0; cursor: pointer; }
+.choice:hover { background: var(--accent-soft); }
+.choice input { margin-top: 5px; }
+.q.right { border-left-color: var(--good); }
+.q.wrong { border-left-color: var(--bad); }
+.choice.correct { background: var(--good-bg); border-color: var(--good); }
+.choice.picked-wrong { background: var(--bad-bg); border-color: var(--bad); }
+.tag { font-size: 14px; font-weight: 700; margin-left: auto; white-space: nowrap; }
+.tag.good { color: var(--good); } .tag.bad { color: var(--bad); }
+.explain { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); }
+.source { font-size: 15px; color: var(--muted); }
+.footer { position: sticky; bottom: 0; background: var(--card); border-top: 2px solid var(--line);
+  padding: 12px 16px; margin: 20px -16px 0; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+
+/* Results */
+.banner { font-size: 22px; font-weight: 700; padding: 16px 20px; border-radius: 10px; margin: 12px 0; }
+.banner.pass { background: var(--good-bg); color: var(--good); border: 1px solid var(--good); }
+.banner.fail { background: var(--bad-bg); color: var(--bad); border: 1px solid var(--bad); }
+.banner .score { font-size: 34px; display: block; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
+.filters button { font: inherit; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--line); background: var(--card); color: var(--text); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; font-size: 17px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 15px; color: var(--muted); font-weight: 600; }
+td.num, th.num { text-align: right; white-space: nowrap; }
+tr.click { cursor: pointer; } tr.click:hover { background: var(--accent-soft); }
+.bar { height: 10px; background: var(--line); border-radius: 5px; overflow: hidden; min-width: 80px; }
+.bar i { display: block; height: 100%; background: var(--good); }
+.bar.low i { background: var(--bad); }
+.flag { color: var(--bad); font-weight: 700; font-size: 14px; }
+.pill { display: inline-block; padding: 1px 10px; border-radius: 12px; font-size: 14px; font-weight: 700; }
+.pill.pass { background: var(--good-bg); color: var(--good); } .pill.fail { background: var(--bad-bg); color: var(--bad); }
+.miss { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.miss:last-child { border-bottom: none; }
+.miss .meta { font-size: 15px; color: var(--muted); }
+svg.chart { width: 100%; height: auto; display: block; }
+.tablewrap { overflow-x: auto; }
+@media (max-width: 600px) { body { font-size: 17px; } th, td { padding: 6px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>CA Knowledge Test Practice</h1>
+  <nav id="tabs">
+    <button data-view="test" role="tab">Test</button>
+    <button data-view="results" role="tab">Results</button>
+    <button data-view="dashboard" role="tab">Dashboard</button>
+  </nav>
+  <main id="view"></main>
+</div>
+<input type="file" id="importFile" accept="application/json,.json" hidden>
+<script src="questions.js"></script>
+<script>
+(function () {
+  'use strict';
+  const TOPIC_LABELS = {
+    speed: 'Speed limits', distances: 'Distances and numbers', signs: 'Signs', signals: 'Signals',
+    lanes: 'Lanes', rightofway: 'Right of way', turns: 'Turns', parking: 'Parking', freeway: 'Freeway',
+    sharing: 'Sharing the road', weather: 'Weather and night', alcohol: 'Alcohol and drugs',
+    safety: 'Safety and equipment', collisions: 'Collisions and license', emergencies: 'Emergencies'
+  };
+  const HIST_KEY = 'driverQuiz.history', VIEW_KEY = 'driverQuiz.lastView', WEAK_LINE = 0.75;
+
+  const BANK = (Array.isArray(window.QUESTION_BANK) ? window.QUESTION_BANK : [])
+    .filter(q => q && q.id && q.topic && Array.isArray(q.choices) && q.choices.length === 3);
+  const byId = new Map(BANK.map(q => [q.id, q]));
+  const topicLabel = t => TOPIC_LABELS[t] || t;
+
+  // ---------- storage ----------
+  function readJSON(key, fallback) { try { const v = JSON.parse(localStorage.getItem(key)); return v == null ? fallback : v; } catch (e) { return fallback; } }
+  function writeJSON(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) { /* ignore */ } }
+  function cleanHistory(list) {
+    if (!Array.isArray(list)) return [];
+    return list.filter(a => a && a.id && Array.isArray(a.questions)).sort((a, b) => String(a.submittedAt).localeCompare(String(b.submittedAt)));
+  }
+
+  let history = cleanHistory(readJSON(HIST_KEY, []));
+  let current = null;        // in-progress test
+  let shown = null;          // attempt displayed in Results
+  let filter = 'all';
+  let view = readJSON(VIEW_KEY, 'test');
+  if (view === 'results' && history.length) shown = history[history.length - 1];
+  if (view === 'results' && !shown) view = 'test';
+
+  // ---------- derived stats ----------
+  function stats() {
+    const q = {}, t = {};
+    history.forEach((a, i) => a.questions.forEach(r => {
+      const s = q[r.id] || (q[r.id] = { seen: 0, lastSeen: -1, wrong: 0, lastWrong: null });
+      s.seen++; s.lastSeen = i;
+      if (!r.correct) { s.wrong++; s.lastWrong = a.submittedAt; }
+      const bq = byId.get(r.id);
+      if (bq) { const ts = t[bq.topic] || (t[bq.topic] = { right: 0, total: 0 }); ts.total++; if (r.correct) ts.right++; }
+    }));
+    return { q, t };
+  }
+
+  // ---------- selection ----------
+  function shuffle(arr) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+  function weightedSample(pool, k, weightOf) {
+    const items = pool.map(x => ({ x, w: weightOf(x) })), out = [];
+    while (out.length < k && items.length) {
+      let r = Math.random() * items.reduce((s, it) => s + it.w, 0), i = 0;
+      for (; i < items.length - 1; i++) { r -= items[i].w; if (r <= 0) break; }
+      out.push(items.splice(i, 1)[0].x);
+    }
+    return out;
+  }
+  function pickQuestions(n, weak) {
+    const { q: qs, t: ts } = stats();
+    const byTopic = {};
+    BANK.forEach(x => (byTopic[x.topic] || (byTopic[x.topic] = [])).push(x));
+    const names = Object.keys(byTopic);
+    const weakTopic = name => { const s = ts[name]; return !!(s && s.total >= 3 && s.right / s.total < WEAK_LINE); };
+    const weightOf = x => {
+      const s = qs[x.id];
+      let w = s ? 1 + (history.length - 1 - s.lastSeen) / Math.max(1, history.length) : 3; // unseen first, then least recent
+      if (weak && s && s.wrong > 0) w *= 2;
+      return w;
+    };
+    // topic quotas: every topic gets one (if room), the rest in proportion to pool size (weak topics count double)
+    const base = n >= names.length ? 1 : 0;
+    const quotas = names.map(name => Math.min(base, byTopic[name].length));
+    const tw = names.map(name => byTopic[name].length * (weak && weakTopic(name) ? 2 : 1));
+    const twTotal = tw.reduce((a, b) => a + b, 0);
+    let left = n - quotas.reduce((a, b) => a + b, 0);
+    const shares = names.map((name, i) => left * tw[i] / twTotal);
+    names.forEach((name, i) => { const add = Math.min(Math.floor(shares[i]), byTopic[name].length - quotas[i]); quotas[i] += add; });
+    left = n - quotas.reduce((a, b) => a + b, 0);
+    const order = names.map((name, i) => ({ i, frac: shares[i] - Math.floor(shares[i]) })).sort((a, b) => b.frac - a.frac);
+    for (const o of order) { if (left <= 0) break; if (quotas[o.i] < byTopic[names[o.i]].length) { quotas[o.i]++; left--; } }
+    let chosen = [];
+    names.forEach((name, i) => { chosen = chosen.concat(weightedSample(byTopic[name], quotas[i], weightOf)); });
+    if (chosen.length < n) { const used = new Set(chosen.map(x => x.id)); chosen = chosen.concat(weightedSample(BANK.filter(x => !used.has(x.id)), n - chosen.length, weightOf)); }
+    return shuffle(chosen).map(x => ({ id: x.id, shuffledChoices: shuffle([0, 1, 2]), picked: null }));
+  }
+
+  // ---------- helpers ----------
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const pct = (r, t) => t ? Math.round(100 * r / t) : 0;
+  const passLine = n => Math.ceil(0.83 * n);
+  const fmtDate = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }); };
+  const fmtDay = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString([], { dateStyle: 'medium' }); };
+  const $ = sel => document.querySelector(sel);
+
+  function setView(v) { view = v; writeJSON(VIEW_KEY, v); render(); }
+
+  // ---------- render ----------
+  function render() {
+    document.querySelectorAll('#tabs button').forEach(b => {
+      b.setAttribute('aria-selected', String(b.dataset.view === view));
+      if (b.dataset.view === 'results') b.disabled = !shown;
+    });
+    const main = $('#view');
+    main.onchange = null;
+    if (!BANK.length) { main.innerHTML = '<div class="card">No questions loaded. Make sure questions.js is next to this file.</div>'; return; }
+    if (view === 'test') renderTest(main);
+    else if (view === 'results') renderResults(main);
+    else renderDashboard(main);
+    window.scrollTo(0, 0);
+  }
+
+  function renderTest(main) {
+    if (!current) {
+      main.innerHTML = `
+        <div class="card">
+          <p>${BANK.length} questions in the bank. The real test is 36 questions; you need ${passLine(36)} right to pass.</p>
+          <div class="row" style="margin-top:12px">
+            <label class="inline">Questions
+              <select id="optN"><option>18</option><option selected>36</option><option>54</option></select>
+            </label>
+            <label class="inline"><input type="checkbox" id="optWeak" checked> Focus on my weak spots</label>
+          </div>
+          <p style="margin-top:16px"><button class="btn" id="startBtn">Start new test</button></p>
+        </div>`;
+      $('#startBtn').onclick = () => {
+        const n = Math.min(parseInt($('#optN').value, 10) || 36, BANK.length);
+        current = { startedAt: new Date().toISOString(), n, questions: pickQuestions(n, $('#optWeak').checked) };
+        render();
+      };
+      return;
+    }
+    const qsHtml = current.questions.map((r, i) => {
+      const q = byId.get(r.id);
+      return `<div class="card q" id="q${i}">
+        <p class="text"><span class="num">${i + 1}.</span>${esc(q.q)}</p>
+        ${r.shuffledChoices.map(orig => `
+          <label class="choice"><input type="radio" name="q${i}" value="${orig}" ${r.picked === orig ? 'checked' : ''}><span>${esc(q.choices[orig])}</span></label>`).join('')}
+      </div>`;
+    }).join('');
+    main.innerHTML = `
+      <p class="muted">Pick one answer per question. Topics are shown after you submit.
+        <button class="btn secondary" id="abandonBtn" style="margin-left:8px;padding:4px 12px;font-size:15px">Cancel test</button></p>
+      ${qsHtml}
+      <div class="footer"><strong id="answered"></strong><button class="btn" id="submitBtn">Submit</button></div>`;
+    const updateCount = () => { const a = current.questions.filter(r => r.picked != null).length; $('#answered').textContent = `Answered ${a} of ${current.n}`; };
+    updateCount();
+    main.onchange = e => {
+      if (e.target.type !== 'radio') return;
+      current.questions[+e.target.name.slice(1)].picked = +e.target.value; updateCount();
+    };
+    $('#abandonBtn').onclick = () => { if (confirm('Throw away this test? Nothing will be saved.')) { current = null; render(); } };
+    $('#submitBtn').onclick = submit;
+  }
+
+  function submit() {
+    const blank = current.questions.filter(r => r.picked == null).length;
+    if (blank && !confirm(`${blank} question${blank > 1 ? 's' : ''} left blank. Blanks count as wrong. Submit anyway?`)) return;
+    const questions = current.questions.map(r => ({ id: r.id, shuffledChoices: r.shuffledChoices, picked: r.picked, correct: r.picked === byId.get(r.id).answer }));
+    const attempt = { id: 'a' + Date.now(), startedAt: current.startedAt, submittedAt: new Date().toISOString(), n: current.n, questions, score: questions.filter(r => r.correct).length };
+    history.push(attempt); writeJSON(HIST_KEY, history);
+    current = null; shown = attempt; filter = 'all';
+    setView('results');
+  }
+
+  function renderResults(main) {
+    const a = shown, need = passLine(a.n), pass = a.score >= need;
+    const perTopic = {};
+    a.questions.forEach(r => { const q = byId.get(r.id); if (!q) return; const t = perTopic[q.topic] || (perTopic[q.topic] = { right: 0, total: 0 }); t.total++; if (r.correct) t.right++; });
+    const topicRows = Object.entries(perTopic).sort((x, y) => (x[1].right / x[1].total) - (y[1].right / y[1].total) || y[1].total - x[1].total)
+      .map(([t, s]) => `<tr><td>${esc(topicLabel(t))}</td><td class="num">${s.right} / ${s.total}</td><td class="num" style="color:${s.right / s.total < WEAK_LINE ? 'var(--bad)' : 'var(--good)'}">${pct(s.right, s.total)}%</td></tr>`).join('');
+    const items = a.questions.filter(r => filter === 'all' || (filter === 'wrong' ? !r.correct : r.correct));
+    const keyHtml = items.map(r => {
+      const q = byId.get(r.id), i = a.questions.indexOf(r);
+      if (!q) return `<div class="card q wrong"><p class="text"><span class="num">${i + 1}.</span>(question ${esc(r.id)} is no longer in the bank)</p></div>`;
+      return `<div class="card q ${r.correct ? 'right' : 'wrong'}">
+        <p class="text"><span class="num">${i + 1}.</span>${esc(q.q)}<span class="topic">${esc(topicLabel(q.topic))}</span></p>
+        ${(r.shuffledChoices || [0, 1, 2]).map(orig => {
+          const cls = orig === q.answer ? 'correct' : (orig === r.picked ? 'picked-wrong' : '');
+          const tag = orig === q.answer ? '<span class="tag good">Correct</span>' : (orig === r.picked ? '<span class="tag bad">Your answer</span>' : '');
+          return `<div class="choice ${cls}"><span>${esc(q.choices[orig])}</span>${tag}</div>`;
+        }).join('')}
+        ${r.picked == null ? '<p class="tag bad" style="margin:6px 0">No answer</p>' : ''}
+        <div class="explain"><p>${esc(q.explanation)}</p><p class="source">${esc(q.source)}</p></div>
+      </div>`;
+    }).join('') || '<p class="muted">Nothing to show for this filter.</p>';
+    main.innerHTML = `
+      <p class="muted">${esc(fmtDate(a.submittedAt))}</p>
+      <div class="banner ${pass ? 'pass' : 'fail'}"><span class="score">${a.score} / ${a.n} &middot; ${pct(a.score, a.n)}%</span>${pass ? 'PASS' : 'NOT YET'} &middot; need ${need} of ${a.n}</div>
+      <div class="card"><h3 style="margin-top:0">By topic (weakest first)</h3><table><tbody>${topicRows}</tbody></table></div>
+      <div class="filters">
+        ${[['all', 'All'], ['wrong', `Wrong only (${a.n - a.score})`], ['right', `Right only (${a.score})`]].map(([k, l]) => `<button data-f="${k}" aria-pressed="${filter === k}">${l}</button>`).join('')}
+      </div>
+      ${keyHtml}
+      <p style="margin-top:24px"><button class="btn" id="againBtn">Start another test</button></p>`;
+    main.querySelectorAll('.filters button').forEach(b => b.onclick = () => { filter = b.dataset.f; render(); });
+    $('#againBtn').onclick = () => setView('test');
+  }
+
+  function chartSvg() {
+    const W = 800, H = 240, L = 44, R = 12, T = 16, B = 32, n = history.length;
+    const x = i => L + (n > 1 ? i * (W - L - R) / (n - 1) : (W - L - R) / 2);
+    const y = v => T + (100 - v) * (H - T - B) / 100;
+    const pts = history.map((a, i) => [x(i), y(pct(a.score, a.n))]);
+    const grid = [0, 25, 50, 75, 100].map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${L - 6}" y="${y(v) + 5}" text-anchor="end" font-size="13" fill="var(--muted)">${v}</text>`).join('');
+    return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Score per attempt">
+      ${grid}
+      <line x1="${L}" x2="${W - R}" y1="${y(83)}" y2="${y(83)}" stroke="var(--good)" stroke-dasharray="6 4"/>
+      <text x="${W - R}" y="${y(83) - 5}" text-anchor="end" font-size="13" fill="var(--good)">pass 83%</text>
+      ${n > 1 ? `<polyline fill="none" stroke="var(--accent)" stroke-width="3" points="${pts.map(p => p.join(',')).join(' ')}"/>` : ''}
+      ${pts.map((p, i) => `<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="${history[i].score >= passLine(history[i].n) ? 'var(--good)' : 'var(--bad)'}"><title>${esc(fmtDay(history[i].submittedAt))}: ${pct(history[i].score, history[i].n)}%</title></circle>
+        <text x="${p[0]}" y="${H - 10}" text-anchor="middle" font-size="13" fill="var(--muted)">${i + 1}</text>`).join('')}
+    </svg>`;
+  }
+
+  function renderDashboard(main) {
+    const { q: qs, t: ts } = stats();
+    const attemptsRows = history.slice().reverse().map(a => `<tr class="click" data-id="${esc(a.id)}">
+      <td>${esc(fmtDate(a.submittedAt))}</td><td class="num">${a.n}</td><td class="num">${a.score}</td><td class="num">${pct(a.score, a.n)}%</td>
+      <td><span class="pill ${a.score >= passLine(a.n) ? 'pass' : 'fail'}">${a.score >= passLine(a.n) ? 'Pass' : 'Fail'}</span></td></tr>`).join('');
+    const topics = {};
+    BANK.forEach(x => { const t = topics[x.topic] || (topics[x.topic] = { pool: 0, unseen: 0 }); t.pool++; if (!qs[x.id]) t.unseen++; });
+    const topicRows = Object.keys(topics).map(t => ({ t, s: ts[t] || { right: 0, total: 0 } }))
+      .sort((a, b) => (a.s.total ? a.s.right / a.s.total : 2) - (b.s.total ? b.s.right / b.s.total : 2))
+      .map(({ t, s }) => { const p = pct(s.right, s.total), low = s.total && p < WEAK_LINE * 100; return `<tr><td>${esc(topicLabel(t))}${low ? ' <span class="flag">needs work</span>' : ''}</td>
+        <td class="num">${s.total ? `${s.right} / ${s.total}` : '<span class="muted">not yet</span>'}</td><td class="num">${s.total ? p + '%' : ''}</td>
+        <td><div class="bar ${low ? 'low' : ''}"><i style="width:${s.total ? p : 0}%"></i></div></td></tr>`; }).join('');
+    const missItem = (id, meta) => { const q = byId.get(id); return q ? `<div class="miss"><div class="meta">${esc(topicLabel(q.topic))} &middot; ${meta}</div><div>${esc(q.q)}</div><div style="color:var(--good)">${esc(q.choices[q.answer])}</div></div>` : ''; };
+    const recurring = Object.entries(qs).filter(([, s]) => s.wrong >= 2).sort((a, b) => b[1].wrong - a[1].wrong)
+      .map(([id, s]) => missItem(id, `missed ${s.wrong} times, last ${esc(fmtDay(s.lastWrong))}`)).join('');
+    const last = history[history.length - 1];
+    const lastMissed = last ? last.questions.filter(r => !r.correct).map(r => missItem(r.id, r.picked == null ? 'left blank' : 'wrong')).join('') : '';
+    const unseenRows = Object.entries(topics).filter(([, t]) => t.unseen).sort((a, b) => b[1].unseen - a[1].unseen)
+      .map(([t, s]) => `<tr><td>${esc(topicLabel(t))}</td><td class="num">${s.unseen} of ${s.pool}</td></tr>`).join('');
+    const unseenTotal = Object.values(topics).reduce((a, t) => a + t.unseen, 0);
+
+    main.innerHTML = `
+      <h2 style="margin-top:0">Attempts (${history.length})</h2>
+      ${history.length ? `<div class="card tablewrap"><table><thead><tr><th>When</th><th class="num">Size</th><th class="num">Score</th><th class="num">%</th><th>Result</th></tr></thead><tbody>${attemptsRows}</tbody></table><p class="muted" style="margin:10px 0 0;font-size:15px">Click a row to see its answer key.</p></div>
+      <div class="card"><h3 style="margin-top:0">Score trend</h3>${chartSvg()}</div>` : '<div class="card">No tests taken yet. Start one on the Test tab.</div>'}
+      <h2>Accuracy by topic (all time)</h2>
+      <div class="card tablewrap"><table><thead><tr><th>Topic</th><th class="num">Right</th><th class="num">%</th><th style="width:30%"></th></tr></thead><tbody>${topicRows}</tbody></table>
+        <p class="muted" style="margin:10px 0 0;font-size:15px">Topics under ${WEAK_LINE * 100}% are flagged and get extra weight when "weak spots" is on.</p></div>
+      <h2>Recurring misses</h2>
+      <div class="card">${recurring || '<p class="muted">No question has been missed twice yet.</p>'}</div>
+      <h2>Missed last time</h2>
+      <div class="card">${lastMissed || '<p class="muted">' + (last ? 'Nothing missed on the last test.' : 'No tests yet.') + '</p>'}</div>
+      <h2>Not seen yet (${unseenTotal} of ${BANK.length})</h2>
+      <div class="card">${unseenRows ? `<table><tbody>${unseenRows}</tbody></table>` : '<p class="muted">You have seen every question at least once.</p>'}</div>
+      <h2>History</h2>
+      <div class="card row">
+        <button class="btn secondary" id="exportBtn">Export history</button>
+        <button class="btn secondary" id="importBtn">Import history</button>
+        <button class="btn danger" id="resetBtn">Reset history</button>
+      </div>`;
+    main.querySelectorAll('tr.click').forEach(tr => tr.onclick = () => { shown = history.find(a => a.id === tr.dataset.id); filter = 'all'; setView('results'); });
+    $('#exportBtn').onclick = exportHistory;
+    $('#importBtn').onclick = () => $('#importFile').click();
+    $('#resetBtn').onclick = () => { if (confirm('Delete all saved attempts? Export first if you want a copy.')) { history = []; shown = null; writeJSON(HIST_KEY, history); render(); } };
+  }
+
+  function exportHistory() {
+    const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), history }, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); const d = new Date(); a.download = 'driver-quiz-history-' + [d.getFullYear(), d.getMonth() + 1, d.getDate()].map(v => String(v).padStart(2, '0')).join('-') + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+  $('#importFile').addEventListener('change', e => {
+    const file = e.target.files[0]; e.target.value = '';
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      let data; try { data = JSON.parse(reader.result); } catch (err) { alert('That file is not valid JSON.'); return; }
+      const incoming = cleanHistory(Array.isArray(data) ? data : data && data.history);
+      if (!incoming.length) { alert('No attempts found in that file.'); return; }
+      const have = new Set(history.map(a => a.id));
+      const added = incoming.filter(a => !have.has(a.id));
+      history = cleanHistory(history.concat(added)); writeJSON(HIST_KEY, history);
+      alert(`Imported ${added.length} new attempt${added.length === 1 ? '' : 's'} (${incoming.length - added.length} already present).`);
+      render();
+    };
+    reader.readAsText(file);
+  });
+
+  document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => { if (!b.disabled) setView(b.dataset.view); });
+  render();
+})();
+</script>
+</body>
+</html>
